@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plushie Profit Calculator</title>
+  <!-- Including Tailwind CSS via CDN for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Including React and dependencies for JSX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+</head>
+<body class="bg-gray-100">
+  <!-- Defining root div for React app -->
+  <div id="root" className="min-h-screen flex items-center justify-center p-4"></div>
+
+  <!-- Defining React app with JSX -->
+  <script type="text/babel">
+    // Defining plushie data from Excel with updated fly times
+    const plushieData = [
+      { name: "Chamois Plushie", country: "Switzerland", buyPrice: 400, defaultSellPrice: 7000, defaultQtyPerFly: 21, defaultFlyTime: "2:03" },
+      { name: "Wolverine Plushie", country: "Canada", buyPrice: 30, defaultSellPrice: 7350, defaultQtyPerFly: 21, defaultFlyTime: "0:29" },
+      { name: "Stingray Plushie", country: "Cayman Island", buyPrice: 400, defaultSellPrice: 7350, defaultQtyPerFly: 21, defaultFlyTime: "0:25" },
+      { name: "Jaguar Plushie", country: "Mexico", buyPrice: 10000, defaultSellPrice: 15500, defaultQtyPerFly: 21, defaultFlyTime: "0:18" },
+      { name: "Nessie Plushie", country: "United Kingdom", buyPrice: 200, defaultSellPrice: 35500, defaultQtyPerFly: 21, defaultFlyTime: "1:51" },
+      { name: "Red Fox Plushie", country: "United Kingdom", buyPrice: 1000, defaultSellPrice: 33000, defaultQtyPerFly: 21, defaultFlyTime: "1:51" },
+      { name: "Monkey Plushie", country: "Argentina", buyPrice: 400, defaultSellPrice: 37500, defaultQtyPerFly: 21, defaultFlyTime: "1:57" },
+      { name: "Panda Plushie", country: "China", buyPrice: 400, defaultSellPrice: 57000, defaultQtyPerFly: 21, defaultFlyTime: "2:49" },
+      { name: "Lion Plushie", country: "South Africa", buyPrice: 400, defaultSellPrice: 62500, defaultQtyPerFly: 21, defaultFlyTime: "3:28" },
+      { name: "Camel Plushie", country: "United Arab Emirates", buyPrice: 14000, defaultSellPrice: 80000, defaultQtyPerFly: 21, defaultFlyTime: "3:10" }
+    ];
+
+    // Defining main App component
+    function App() {
+      // Managing state for inputs and calculations
+      const [selectedPlushies, setSelectedPlushies] = React.useState([plushieData[0].name]);
+      const [inputs, setInputs] = React.useState(
+        plushieData.reduce((acc, p) => ({
+          ...acc,
+          [p.name]: {
+            sellPrice: p.defaultSellPrice.toString(),
+            qtyPerFly: p.defaultQtyPerFly.toString(),
+            flyTime: p.defaultFlyTime
+          }
+        }), {})
+      );
+      const [results, setResults] = React.useState(null);
+
+      // Function to parse hours:minutes format to decimal hours
+      const parseFlyTime = (timeStr) => {
+        const regex = /^(\d+):([0-5]\d)$/; // Matches formats like "1:30", "0:45"
+        if (!regex.test(timeStr)) {
+          return NaN;
+        }
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours + (minutes / 60);
+      };
+
+      // Function to format numbers with commas and two decimal places
+      const formatCurrency = (number) => {
+        return number.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      };
+
+      // Handling plushie selection
+      const handlePlushieToggle = (plushieName) => {
+        if (selectedPlushies.includes(plushieName)) {
+          setSelectedPlushies(selectedPlushies.filter(p => p !== plushieName));
+        } else {
+          setSelectedPlushies([...selectedPlushies, plushieName]);
+        }
+      };
+
+      // Handling input changes
+      const handleInputChange = (plushieName, field, value) => {
+        setInputs(prev => ({
+          ...prev,
+          [plushieName]: {
+            ...prev[plushieName],
+            [field]: value
+          }
+        }));
+      };
+
+      // Handling calculation logic
+      const calculate = () => {
+        const newResults = selectedPlushies.map(plushieName => {
+          const plushie = plushieData.find(p => p.name === plushieName);
+          const { sellPrice, qtyPerFly, flyTime } = inputs[plushieName];
+          const buyPrice = plushie.buyPrice;
+          const sellPriceNum = parseFloat(sellPrice);
+          const qtyPerFlyNum = parseInt(qtyPerFly);
+          const flyTimeNum = parseFlyTime(flyTime);
+
+          if (isNaN(sellPriceNum) || isNaN(qtyPerFlyNum) || isNaN(flyTimeNum) || sellPriceNum <= 0 || qtyPerFlyNum <= 0 || flyTimeNum <= 0) {
+            alert(`Invalid input for ${plushieName}: Ensure Sell Price and Quantity per Fly are positive numbers, and Fly Time is in 'hours:minutes' format (e.g., 1:30).`);
+            return null;
+          }
+
+          // Calculating roundtrip time (fly time to country + 3 min + fly time back + 3 min)
+          const roundTripTime = flyTimeNum + (3 / 60) + flyTimeNum + (3 / 60); // in hours
+          const roundTripsPerDay = Math.floor(24 / roundTripTime);
+
+          // Calculating metrics
+          const profitPerUnit = sellPriceNum - buyPrice;
+          const costPerFly = buyPrice * qtyPerFlyNum;
+          const profitPerFly = profitPerUnit * qtyPerFlyNum;
+          const grossPerFly = sellPriceNum * qtyPerFlyNum;
+
+          const qtyPerDay = qtyPerFlyNum * roundTripsPerDay;
+          const costPerDay = costPerFly * roundTripsPerDay;
+          const profitPerDay = profitPerFly * roundTripsPerDay;
+          const grossPerDay = grossPerFly * roundTripsPerDay;
+
+          const qtyPerWeek = qtyPerDay * 7;
+          const costPerWeek = costPerDay * 7;
+          const profitPerWeek = profitPerDay * 7;
+          const grossPerWeek = grossPerDay * 7;
+
+          const qtyPerMonth = qtyPerDay * 30;
+          const costPerMonth = costPerDay * 30;
+          const profitPerMonth = profitPerDay * 30;
+          const grossPerMonth = grossPerDay * 30;
+
+          const qtyPerYear = qtyPerDay * 365;
+          const costPerYear = costPerDay * 365;
+          const profitPerYear = profitPerDay * 365;
+          const grossPerYear = grossPerDay * 365;
+
+          return {
+            plushieName,
+            country: plushie.country,
+            profitPerUnit,
+            costPerFly,
+            profitPerFly,
+            grossPerFly,
+            roundTripsPerDay,
+            qtyPerDay,
+            costPerDay,
+            profitPerDay,
+            grossPerDay,
+            qtyPerWeek,
+            costPerWeek,
+            profitPerWeek,
+            grossPerWeek,
+            qtyPerMonth,
+            costPerMonth,
+            profitPerMonth,
+            grossPerMonth,
+            qtyPerYear,
+            costPerYear,
+            profitPerYear,
+            grossPerYear
+          };
+        });
+
+        if (newResults.some(result => result === null)) {
+          setResults(null);
+          return;
+        }
+
+        setResults(newResults);
+      };
+
+      // Rendering UI
+      return (
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-7xl mx-auto">
+          <h1 className="text-2xl font-bold text-center mb-6">Plushie Profit Calculator</h1>
+          
+          {/* Plushie selection */}
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Select Plushies to Compare</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {plushieData.map(p => (
+                <label key={p.name} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedPlushies.includes(p.name)}
+                    onChange={() => handlePlushieToggle(p.name)}
+                    className="mr-2"
+                  />
+                  {p.name} ({p.country})
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Input fields for each selected plushie */}
+          {selectedPlushies.map(plushieName => (
+            <div key={plushieName} className="mb-6 border p-4 rounded">
+              <h3 className="text-lg font-semibold mb-2">{plushieName}</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-gray-700 mb-2">Sell Price ($)</label>
+                  <input
+                    type="number"
+                    value={inputs[plushieName].sellPrice}
+                    onChange={(e) => handleInputChange(plushieName, 'sellPrice', e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="Enter sell price"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Quantity per Fly</label>
+                  <input
+                    type="number"
+                    value={inputs[plushieName].qtyPerFly}
+                    onChange={(e) => handleInputChange(plushieName, 'qtyPerFly', e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="Enter quantity per fly"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Fly Time (hours:minutes)</label>
+                  <input
+                    type="text"
+                    value={inputs[plushieName].flyTime}
+                    onChange={(e) => handleInputChange(plushieName, 'flyTime', e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="e.g., 1:30"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Calculate button */}
+          <button
+            onClick={calculate}
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            Calculate
+          </button>
+
+          {/* Results display */}
+          {results && (
+            <div className="mt-6 overflow-x-auto">
+              <h2 className="text-xl font-semibold mb-4">Comparison Results</h2>
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border p-2">Metric</th>
+                    {results.map(r => (
+                      <th key={r.plushieName} className="border p-2">{r.plushieName} ({r.country})</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { label: "Profit per Unit", key: "profitPerUnit", isCurrency: true },
+                    { label: "Cost per Fly", key: "costPerFly", isCurrency: true },
+                    { label: "Profit per Fly", key: "profitPerFly", isCurrency: true },
+                    { label: "Gross per Fly", key: "grossPerFly", isCurrency: true },
+                    { label: "Roundtrips per Day", key: "roundTripsPerDay" },
+                    { label: "Qty per Day", key: "qtyPerDay" },
+                    { label: "Cost per Day", key: "costPerDay", isCurrency: true },
+                    { label: "Profit per Day", key: "profitPerDay", isCurrency: true },
+                    { label: "Gross per Day", key: "grossPerDay", isCurrency: true },
+                    { label: "Qty per Week", key: "qtyPerWeek" },
+                    { label: "Cost per Week", key: "costPerWeek", isCurrency: true },
+                    { label: "Profit per Week", key: "profitPerWeek", isCurrency: true },
+                    { label: "Gross per Week", key: "grossPerWeek", isCurrency: true },
+                    { label: "Qty per Month", key: "qtyPerMonth" },
+                    { label: "Cost per Month", key: "costPerMonth", isCurrency: true },
+                    { label: "Profit per Month", key: "profitPerMonth", isCurrency: true },
+                    { label: "Gross per Month", key: "grossPerMonth", isCurrency: true },
+                    { label: "Qty per Year", key: "qtyPerYear" },
+                    { label: "Cost per Year", key: "costPerYear", isCurrency: true },
+                    { label: "Profit per Year", key: "profitPerYear", isCurrency: true },
+                    { label: "Gross per Year", key: "grossPerYear", isCurrency: true }
+                  ].map(metric => (
+                    <tr key={metric.key} className="border-b">
+                      <td className="border p-2 font-medium">{metric.label}</td>
+                      {results.map(r => (
+                        <td key={r.plushieName} className="border p-2">
+                          {metric.isCurrency ? `$${formatCurrency(r[metric.key])}` : r[metric.key]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Rendering React app
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
