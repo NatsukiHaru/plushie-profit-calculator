@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plushie & Flower Profit Calculator</title>
+  <style>
+    *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
+    html { line-height: 1.5; -webkit-text-size-adjust: 100%; -moz-tab-size: 4; -o-tab-size: 4; tab-size: 4; }
+    body { margin: 0; line-height: inherit; }
+    .bg-gray-100 { background-color: #f3f4f6; }
+    .min-h-screen { min-height: 100vh; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .p-4 { padding: 1rem; }
+    .bg-white { background-color: #ffffff; }
+    .p-6 { padding: 1.5rem; }
+    .rounded-lg { border-radius: 0.5rem; }
+    .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    .w-full { width: 100%; }
+    .max-w-4xl { max-width: 64rem; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+    .font-bold { font-weight: 700; }
+    .text-center { text-align: center; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .block { display: block; }
+    .text-gray-700 { color: #374151; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .grid { display: grid; }
+    .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gap-2 { gap: 0.5rem; }
+    .flex.items-center { align-items: center; }
+    .mr-4 { margin-right: 1rem; }
+    .mr-2 { margin-right: 0.5rem; }
+    .ml-2 { margin-left: 0.5rem; }
+    .border { border-width: 1px; }
+    .p-4.border.rounded { padding: 1rem; border-radius: 0.5rem; }
+    .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+    .font-semibold { font-weight: 600; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .sm\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .gap-4 { gap: 1rem; }
+    .w-full.p-2.border.rounded { width: 100%; padding: 0.5rem; border-width: 1px; border-radius: 0.5rem; }
+    .min-0 { min-width: 0; }
+    .bg-blue-500 { background-color: #3b82f6; }
+    .text-white { color: #ffffff; }
+    .hover\:bg-blue-600:hover { background-color: #2563eb; }
+    .hover\:bg-green-600:hover { background-color: #166534; }
+    .bg-green-500 { background-color: #22c55e; }
+    .overflow-x-auto { overflow-x: auto; }
+    .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+    .text-gray-500 { color: #6b7280; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .bg-gray-200 { background-color: #e5e7eb; }
+    .border-collapse { border-collapse: collapse; }
+    .border-b { border-bottom-width: 1px; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+    .bg-gray-300 { background-color: #d1d5db; }
+    .mt-4 { margin-top: 1rem; }
+    .mt-12 { margin-top: 3rem; }
+    .mb-5 { margin-bottom: 1.25rem; }
+    .text-red-500 { color: #ef4444; }
+    .bg-gray-100 { background-color: #f3f4f6; }
+    .notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #22c55e; color: white; padding: 10px 20px; border-radius: 5px; z-index: 1000; display: none; }
+    .notification.show { display: block; animation: fadeOut 5s forwards; }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; display: none; } }
+    .bg-green-100 { background-color: #d1fae5; }
+    .text-green-800 { color: #065f46; }
+    .bg-yellow-100 { background-color: #fefcbf; }
+    .text-yellow-800 { color: #a16207; }
+    .progress-bar { width: 100%; background-color: #e5e7eb; height: 20px; border-radius: 5px; overflow: hidden; }
+    .progress { height: 100%; background-color: #22c55e; transition: width 0.3s; }
+    .tabs { display: flex; border-bottom: 2px solid #e5e7eb; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab { padding: 0.75rem 1.5rem; cursor: pointer; font-weight: 600; color: #6b7280; }
+    .tab.active { color: #3b82f6; border-bottom: 2px solid #3b82f6; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .canvas-container { width: 100%; height: 300px; margin: 1rem 0; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+</head>
+<body class="bg-gray-100">
+  <div id="root" className="min-h-screen flex items-center justify-center p-4"></div>
+  <div id="notification" className="notification"></div>
+  <div id="canvasPanel" className="canvas-container hidden"></div>
+
+  <script type="text/javascript">
+    const plushieData = [
+      { name: "Jaguar Plushie", country: "Mexico", itemID: 258, buyPrice: 10000, defaultSellPrice: 15500, defaultQtyPerFly: 21, flyTimes: { standard: "0:26", airstrip: "0:18", wlt: "0:13", business: "0:08" } },
+      { name: "Wolverine Plushie", country: "Canada", itemID: 261, buyPrice: 30, defaultSellPrice: 7350, defaultQtyPerFly: 21, flyTimes: { standard: "0:41", airstrip: "0:29", wlt: "0:20", business: "0:12" } },
+      { name: "Nessie Plushie", country: "United Kingdom", itemID: 266, buyPrice: 200, defaultSellPrice: 35500, defaultQtyPerFly: 21, flyTimes: { standard: "2:39", airstrip: "1:51", wlt: "1:20", business: "0:48" } },
+      { name: "Red Fox Plushie", country: "United Kingdom", itemID: 268, buyPrice: 1000, defaultSellPrice: 33000, defaultQtyPerFly: 21, flyTimes: { standard: "2:39", airstrip: "1:51", wlt: "1:20", business: "0:48" } },
+      { name: "Monkey Plushie", country: "Argentina", itemID: 269, buyPrice: 400, defaultSellPrice: 37500, defaultQtyPerFly: 21, flyTimes: { standard: "2:47", airstrip: "1:57", wlt: "1:23", business: "0:50" } },
+      { name: "Chamois Plushie", country: "Switzerland", itemID: 273, buyPrice: 400, defaultSellPrice: 7000, defaultQtyPerFly: 21, flyTimes: { standard: "2:55", airstrip: "2:03", wlt: "1:28", business: "0:53" } },
+      { name: "Panda Plushie", country: "China", itemID: 274, buyPrice: 400, defaultSellPrice: 57000, defaultQtyPerFly: 21, flyTimes: { standard: "4:02", airstrip: "2:49", wlt: "2:01", business: "1:12" } },
+      { name: "Lion Plushie", country: "South Africa", itemID: 281, buyPrice: 400, defaultSellPrice: 62500, defaultQtyPerFly: 21, flyTimes: { standard: "4:57", airstrip: "3:28", wlt: "2:29", business: "1:29" } },
+      { name: "Camel Plushie", country: "United Arab Emirates", itemID: 384, buyPrice: 14000, defaultSellPrice: 80000, defaultQtyPerFly: 21, flyTimes: { standard: "4:31", airstrip: "3:10", wlt: "2:15", business: "1:21" } },
+      { name: "Stingray Plushie", country: "Cayman Islands", itemID: 618, buyPrice: 400, defaultSellPrice: 7350, defaultQtyPerFly: 21, flyTimes: { standard: "0:35", airstrip: "0:25", wlt: "0:18", business: "0:11" } }
+    ];
+
+    const flowerData = [
+      { name: "African Violet", country: "South Africa", itemID: 282, buyPrice: 2000, defaultSellPrice: 6000, defaultQtyPerFly: 21, flyTimes: { standard: "4:57", airstrip: "3:28", wlt: "2:29", business: "1:29" } },
+      { name: "Banana Orchid", country: "Cayman Islands", itemID: 617, buyPrice: 4000, defaultSellPrice: 12000, defaultQtyPerFly: 21, flyTimes: { standard: "0:35", airstrip: "0:25", wlt: "0:18", business: "0:11" } },
+      { name: "Ceibo Flower", country: "Argentina", itemID: 271, buyPrice: 500, defaultSellPrice: 1500, defaultQtyPerFly: 21, flyTimes: { standard: "2:47", airstrip: "1:57", wlt: "1:23", business: "0:50" } },
+      { name: "Cherry Blossom", country: "Japan", itemID: 277, buyPrice: 500, defaultSellPrice: 1500, defaultQtyPerFly: 21, flyTimes: { standard: "4:05", airstrip: "2:52", wlt: "2:03", business: "1:14" } },
+      { name: "Crocus", country: "Canada", itemID: 263, buyPrice: 600, defaultSellPrice: 1800, defaultQtyPerFly: 21, flyTimes: { standard: "0:41", airstrip: "0:29", wlt: "0:20", business: "0:12" } },
+      { name: "Dahlia", country: "Mexico", itemID: 260, buyPrice: 300, defaultSellPrice: 900, defaultQtyPerFly: 21, flyTimes: { standard: "0:26", airstrip: "0:18", wlt: "0:13", business: "0:08" } },
+      { name: "Edelweiss", country: "Switzerland", itemID: 272, buyPrice: 900, defaultSellPrice: 2700, defaultQtyPerFly: 21, flyTimes: { standard: "2:55", airstrip: "2:03", wlt: "1:28", business: "0:53" } },
+      { name: "Heather", country: "United Kingdom", itemID: 267, buyPrice: 5000, defaultSellPrice: 15000, defaultQtyPerFly: 21, flyTimes: { standard: "2:39", airstrip: "1:51", wlt: "1:20", business: "0:48" } },
+      { name: "Orchid", country: "Hawaii", itemID: 264, buyPrice: 700, defaultSellPrice: 2100, defaultQtyPerFly: 21, flyTimes: { standard: "3:00", airstrip: "2:06", wlt: "1:30", business: "0:54" } },
+      { name: "Peony", country: "China", itemID: 276, buyPrice: 5000, defaultSellPrice: 15000, defaultQtyPerFly: 21, flyTimes: { standard: "4:02", airstrip: "2:49", wlt: "2:01", business: "1:12" } },
+      { name: "Tribulus Omanense", country: "United Arab Emirates", itemID: 385, buyPrice: 6000, defaultSellPrice: 18000, defaultQtyPerFly: 21, flyTimes: { standard: "4:31", airstrip: "3:10", wlt: "2:15", business: "1:21" } }
+    ];
+
+    function App() {
+      const [activeTab, setActiveTab] = React.useState("main");
+      const [itemType, setItemType] = React.useState(() => localStorage.getItem('itemType') || "plushies");
+      const [selectedPlushies, setSelectedPlushies] = React.useState(() => JSON.parse(localStorage.getItem('selectedPlushies')) || []);
+      const [selectedFlowers, setSelectedFlowers] = React.useState(() => JSON.parse(localStorage.getItem('selectedFlowers')) || []);
+      const [watchlist, setWatchlist] = React.useState(() => JSON.parse(localStorage.getItem('watchlist')) || []);
+      const [travelMethod, setTravelMethod] = React.useState(() => localStorage.getItem('travelMethod') || "airstrip");
+      const [profitGoal, setProfitGoal] = React.useState(() => parseFloat(localStorage.getItem('profitGoal')) || 0);
+      const [goalTimeframe, setGoalTimeframe] = React.useState(() => localStorage.getItem('goalTimeframe') || "month");
+      const [inputs, setInputs] = React.useState(
+        [...plushieData, ...flowerData].reduce((acc, p) => ({
+          ...acc,
+          [p.name]: {
+            sellPrice: p.defaultSellPrice.toString(),
+            qtyPerFly: p.defaultQtyPerFly.toString(),
+            flyTime: p.flyTimes.airstrip,
+            priceSource: "Default",
+            customFlyTime: false,
+            priceHistory: JSON.parse(localStorage.getItem(`priceHistory_${p.name}`)) || []
+          }
+        }), {})
+      );
+      const [results, setResults] = React.useState(null);
+      const [selectedTimeframe, setSelectedTimeframe] = React.useState("overall");
+      const [fetchStatus, setFetchStatus] = React.useState(null);
+      const [apiKey, setApiKey] = React.useState(() => localStorage.getItem('apiKey') || "");
+      const [watchlistNotifications, setWatchlistNotifications] = React.useState([]);
+      const [chartData, setChartData] = React.useState(null);
+      const [chartPeriod, setChartPeriod] = React.useState("month");
+
+      React.useEffect(() => {
+        localStorage.setItem('itemType', itemType);
+        localStorage.setItem('selectedPlushies', JSON.stringify(selectedPlushies));
+        localStorage.setItem('selectedFlowers', JSON.stringify(selectedFlowers));
+        localStorage.setItem('watchlist', JSON.stringify(watchlist));
+        localStorage.setItem('travelMethod', travelMethod);
+        localStorage.setItem('apiKey', apiKey);
+        localStorage.setItem('profitGoal', profitGoal.toString());
+        localStorage.setItem('goalTimeframe', goalTimeframe);
+      }, [itemType, selectedPlushies, selectedFlowers, watchlist, travelMethod, apiKey, profitGoal, goalTimeframe]);
+
+      React.useEffect(() => {
+        setInputs(prev => {
+          const newInputs = { ...prev };
+          [...plushieData, ...flowerData].forEach(item => {
+            if (!newInputs[item.name].customFlyTime) {
+              newInputs[item.name].flyTime = item.flyTimes[travelMethod];
+            }
+          });
+          return newInputs;
+        });
+      }, [travelMethod]);
+
+      const fetchMarketPrices = async () => {
+        if (!apiKey) {
+          setFetchStatus({ type: "error", messages: [{ item: "Error", message: "Please enter a valid API key!" }] });
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `https://api.torn.com/torn/?selections=items&key=${apiKey}`
+          );
+          const data = await response.json();
+          console.log("API Response for all items:", data);
+
+          if (data.error) {
+            throw new Error(`Error ${data.error.code}: ${data.error.error}`);
+          }
+
+          const newInputs = JSON.parse(JSON.stringify(inputs));
+          const statusMessages = [];
+          const notifications = [];
+          const allItems = [...plushieData, ...flowerData];
+
+          const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+          for (const item of allItems) {
+            const itemInfo = data.items[item.itemID];
+            let newPrice = item.defaultSellPrice;
+            if (itemInfo && itemInfo.market_value > 0) {
+              newPrice = itemInfo.market_value;
+              newInputs[item.name].sellPrice = newPrice.toString();
+              newInputs[item.name].priceSource = "Torn Market Value";
+              if (selectedItems.includes(item.name)) {
+                statusMessages.push({ item: item.name, message: `$ ${formatCurrency(newPrice)}` });
+              }
+            } else {
+              newInputs[item.name].priceSource = "Default";
+              if (selectedItems.includes(item.name)) {
+                statusMessages.push({ item: item.name, message: "No market value found. Using default price." });
+              }
+            }
+
+            const priceHistory = newInputs[item.name].priceHistory || [];
+            priceHistory.push({ date: now, price: newPrice });
+            if (priceHistory.length > 7) priceHistory.shift();
+            newInputs[item.name].priceHistory = priceHistory;
+            localStorage.setItem(`priceHistory_${item.name}`, JSON.stringify(priceHistory));
+
+            if (watchlist.includes(item.name) && priceHistory.length > 1) {
+              const prevPrice = priceHistory[priceHistory.length - 2].price;
+              const priceChange = ((newPrice - prevPrice) / prevPrice) * 100;
+              if (Math.abs(priceChange) >= 10) {
+                notifications.push({
+                  item: item.name,
+                  message: `Price ${priceChange > 0 ? "increased" : "decreased"} by ${Math.abs(priceChange).toFixed(2)}%! Now: $ ${formatCurrency(newPrice)}`
+                });
+              }
+            }
+          }
+
+          statusMessages.sort((a, b) => {
+            const aHasPrice = a.message.startsWith('$');
+            const bHasPrice = b.message.startsWith('$');
+            return aHasPrice === bHasPrice ? 0 : aHasPrice ? -1 : 1;
+          });
+
+          setFetchStatus({ type: "success", messages: statusMessages });
+          setWatchlistNotifications(notifications);
+          setInputs(prev => ({ ...prev, ...newInputs }));
+
+          const notification = document.getElementById('notification');
+          notification.textContent = "Fetching prices successful!";
+          notification.className = "notification show";
+          setTimeout(() => {
+            notification.className = "notification";
+          }, 5000);
+        } catch (error) {
+          setFetchStatus({ type: "error", messages: [{ item: "Error", message: `Failed to fetch prices: ${error.message}` }] });
+        }
+      };
+
+      const parseFlyTime = (timeStr) => {
+        const regex = /^(\d+):([0-5]\d)$/;
+        if (!regex.test(timeStr)) return NaN;
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours + (minutes / 60);
+      };
+
+      const formatNumber = (number) => {
+        return number.toLocaleString('en-US');
+      };
+
+      const formatCurrency = (number) => {
+        return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      };
+
+      const handlePlushieToggle = (itemName) => {
+        if (selectedPlushies.includes(itemName)) {
+          setSelectedPlushies(selectedPlushies.filter(p => p !== itemName));
+        } else {
+          setSelectedPlushies([...selectedPlushies, itemName]);
+        }
+      };
+
+      const handleFlowerToggle = (itemName) => {
+        if (selectedFlowers.includes(itemName)) {
+          setSelectedFlowers(selectedFlowers.filter(p => p !== itemName));
+        } else {
+          setSelectedFlowers([...selectedFlowers, itemName]);
+        }
+      };
+
+      const toggleWatchlist = (itemName) => {
+        if (watchlist.includes(itemName)) {
+          setWatchlist(watchlist.filter(item => item !== itemName));
+        } else {
+          setWatchlist([...watchlist, itemName]);
+        }
+      };
+
+      const handleInputChange = (itemName, field, value) => {
+        setInputs(prev => ({
+          ...prev,
+          [itemName]: {
+            ...prev[itemName],
+            [field]: value,
+            priceSource: field === 'sellPrice' ? "Manual" : prev[itemName].priceSource,
+            customFlyTime: field === 'flyTime' ? true : prev[itemName].customFlyTime
+          }
+        }));
+      };
+
+      const calculate = () => {
+        const selectedItems = [...selectedPlushies, ...selectedFlowers];
+        const allItems = [...plushieData, ...flowerData].filter(item => selectedItems.includes(item.name));
+
+        const newResults = allItems.map(item => {
+          const { sellPrice, qtyPerFly, flyTime } = inputs[item.name];
+          const buyPrice = item.buyPrice;
+          const sellPriceNum = parseFloat(sellPrice);
+          const qtyPerFlyNum = parseInt(qtyPerFly);
+          const flyTimeNum = parseFlyTime(flyTime);
+
+          if (isNaN(sellPriceNum) || isNaN(qtyPerFlyNum) || isNaN(flyTimeNum) || sellPriceNum <= 0 || qtyPerFlyNum <= 0 || flyTimeNum <= 0) {
+            alert(`Invalid input for ${item.name}: Ensure Sell Price and Quantity per Fly are positive numbers, and Fly Time is in 'hours:minutes' format (e.g., 1:30).`);
+            return null;
+          }
+
+          const roundTripTime = flyTimeNum + (3 / 60) + flyTimeNum + (3 / 60);
+          const roundTripsPerDay = Math.floor(24 / roundTripTime);
+          const roundTripsPerWeek = roundTripsPerDay * 7;
+          const roundTripsPerMonth = roundTripsPerDay * 30;
+          const roundTripsPerYear = roundTripsPerDay * 365;
+
+          const buyPricePerFly = buyPrice * qtyPerFlyNum;
+          const sellPricePerFly = sellPriceNum * qtyPerFlyNum;
+          const totalProfitPerUnit = sellPriceNum - buyPrice;
+          const totalProfitPerFly = sellPricePerFly - buyPricePerFly;
+
+          const qtyPerDay = qtyPerFlyNum * roundTripsPerDay;
+          const buyPricePerDay = buyPrice * qtyPerDay;
+          const sellPricePerDay = sellPriceNum * qtyPerDay;
+          const profitPerDay = sellPricePerDay - buyPricePerDay;
+
+          const qtyPerWeek = qtyPerDay * 7;
+          const buyPricePerWeek = buyPricePerDay * 7;
+          const sellPricePerWeek = sellPricePerDay * 7;
+          const profitPerWeek = sellPricePerWeek - buyPricePerWeek;
+
+          const qtyPerMonth = qtyPerDay * 30;
+          const buyPricePerMonth = buyPricePerDay * 30;
+          const sellPricePerMonth = sellPricePerDay * 30;
+          const profitPerMonth = sellPricePerMonth - buyPricePerMonth;
+
+          const qtyPerYear = qtyPerDay * 365;
+          const buyPricePerYear = buyPricePerDay * 365;
+          const sellPricePerYear = sellPricePerDay * 365;
+          const profitPerYear = sellPricePerYear - buyPricePerYear;
+
+          return {
+            itemName: item.name,
+            country: item.country,
+            buyPricePerUnit: buyPrice,
+            sellPricePerUnit: sellPriceNum,
+            totalProfitPerUnit,
+            buyPricePerFly,
+            sellPricePerFly,
+            totalProfitPerFly,
+            roundTripsPerDay,
+            roundTripsPerWeek,
+            roundTripsPerMonth,
+            roundTripsPerYear,
+            qtyPerDay,
+            buyPricePerDay,
+            sellPricePerDay,
+            profitPerDay,
+            qtyPerWeek,
+            buyPricePerWeek,
+            sellPricePerWeek,
+            profitPerWeek,
+            qtyPerMonth,
+            buyPricePerMonth,
+            sellPricePerMonth,
+            profitPerMonth,
+            qtyPerYear,
+            buyPricePerYear,
+            sellPricePerYear,
+            profitPerYear,
+            profitMargin: ((sellPriceNum - buyPrice) / buyPrice) * 100
+          };
+        });
+
+        if (newResults.some(result => result === null)) {
+          setResults(null);
+          return;
+        }
+
+        setResults(newResults);
+        setChartData(newResults.map(r => ({
+          label: r.itemName,
+          value: chartPeriod === "month" ? r.profitPerMonth : r.profitPerYear,
+          maxValue: Math.max(...newResults.map(r => chartPeriod === "month" ? r.profitPerMonth : r.profitPerYear))
+        })));
+      };
+
+      const metricsByTimeframe = {
+        overall: [
+          { label: "Buy Price per Unit", key: "buyPricePerUnit", isCurrency: true },
+          { label: "Sell Price per Unit", key: "sellPricePerUnit", isCurrency: true },
+          { label: "Total Profit per Unit", key: "totalProfitPerUnit", isCurrency: true, isBold: true },
+          { label: "Per Fly Metrics", key: "", isSeparator: true },
+          { label: "Buy Price per Fly", key: "buyPricePerFly", isCurrency: true },
+          { label: "Sell Price per Fly", key: "sellPricePerFly", isCurrency: true },
+          { label: "Total Profit per Fly", key: "totalProfitPerFly", isCurrency: true, isBold: true },
+          { label: "Daily Metrics", key: "", isSeparator: true },
+          { label: "Quantity per Day", key: "qtyPerDay" },
+          { label: "Buy Price per Day", key: "buyPricePerDay", isCurrency: true },
+          { label: "Sell Price per Day", key: "sellPricePerDay", isCurrency: true },
+          { label: "Profit per Day", key: "profitPerDay", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Day", key: "roundTripsPerDay" },
+          { label: "Weekly Metrics", key: "", isSeparator: true },
+          { label: "Quantity per Week", key: "qtyPerWeek" },
+          { label: "Buy Price per Week", key: "buyPricePerWeek", isCurrency: true },
+          { label: "Sell Price per Week", key: "sellPricePerWeek", isCurrency: true },
+          { label: "Profit per Week", key: "profitPerWeek", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Week", key: "roundTripsPerWeek" },
+          { label: "Monthly Metrics", key: "", isSeparator: true },
+          { label: "Quantity per Month", key: "qtyPerMonth" },
+          { label: "Buy Price per Month", key: "buyPricePerMonth", isCurrency: true },
+          { label: "Sell Price per Month", key: "sellPricePerMonth", isCurrency: true },
+          { label: "Profit per Month", key: "profitPerMonth", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Month", key: "roundTripsPerMonth" },
+          { label: "Yearly Metrics", key: "", isSeparator: true },
+          { label: "Quantity per Year", key: "qtyPerYear" },
+          { label: "Buy Price per Year", key: "buyPricePerYear", isCurrency: true },
+          { label: "Sell Price per Year", key: "sellPricePerYear", isCurrency: true },
+          { label: "Profit per Year", key: "profitPerYear", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Year", key: "roundTripsPerYear" }
+        ],
+        unit: [
+          { label: "Buy Price per Unit", key: "buyPricePerUnit", isCurrency: true },
+          { label: "Sell Price per Unit", key: "sellPricePerUnit", isCurrency: true },
+          { label: "Total Profit per Unit", key: "totalProfitPerUnit", isCurrency: true, isBold: true },
+          { label: "Buy Price per Fly", key: "buyPricePerFly", isCurrency: true },
+          { label: "Sell Price per Fly", key: "sellPricePerFly", isCurrency: true },
+          { label: "Total Profit per Fly", key: "totalProfitPerFly", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Day", key: "roundTripsPerDay" }
+        ],
+        day: [
+          { label: "Quantity per Day", key: "qtyPerDay" },
+          { label: "Buy Price per Day", key: "buyPricePerDay", isCurrency: true },
+          { label: "Sell Price per Day", key: "sellPricePerDay", isCurrency: true },
+          { label: "Profit per Day", key: "profitPerDay", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Day", key: "roundTripsPerDay" }
+        ],
+        week: [
+          { label: "Quantity per Week", key: "qtyPerWeek" },
+          { label: "Buy Price per Week", key: "buyPricePerWeek", isCurrency: true },
+          { label: "Sell Price per Week", key: "sellPricePerWeek", isCurrency: true },
+          { label: "Profit per Week", key: "profitPerWeek", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Week", key: "roundTripsPerWeek" }
+        ],
+        month: [
+          { label: "Quantity per Month", key: "qtyPerMonth" },
+          { label: "Buy Price per Month", key: "buyPricePerMonth", isCurrency: true },
+          { label: "Sell Price per Month", key: "sellPricePerMonth", isCurrency: true },
+          { label: "Profit per Month", key: "profitPerMonth", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Month", key: "roundTripsPerMonth" }
+        ],
+        year: [
+          { label: "Quantity per Year", key: "qtyPerYear" },
+          { label: "Buy Price per Year", key: "buyPricePerYear", isCurrency: true },
+          { label: "Sell Price per Year", key: "sellPricePerYear", isCurrency: true },
+          { label: "Profit per Year", key: "profitPerYear", isCurrency: true, isBold: true },
+          { label: "Roundtrips per Year", key: "roundTripsPerYear" }
+        ]
+      };
+
+      const selectedItems = [...selectedPlushies, ...selectedFlowers];
+
+      const getMarketInsights = () => {
+        if (!results || results.length < 2) return [];
+
+        const insights = [];
+
+        // Best Daily Profit
+        const bestDailyProfit = results.reduce((best, r) => r.profitPerDay > best.profitPerDay ? r : best, results[0]);
+        if (results.length >= 3) {
+          const othersProfit = results.filter(r => r !== bestDailyProfit).reduce((sum, r) => sum + r.profitPerDay, 0) / (results.length - 1);
+          const dailyDiff = bestDailyProfit.profitPerDay - othersProfit;
+          if (dailyDiff > 0) {
+            const profitBoostBest = (bestDailyProfit.sellPricePerUnit / bestDailyProfit.buyPricePerUnit).toFixed(1);
+            insights.push({
+              title: "Best Daily Profit",
+              message: `${bestDailyProfit.itemName} beats the average of other items by $ ${formatCurrency(dailyDiff)} per day! Its Profit Boost is ${profitBoostBest}x your cost.`,
+              style: "bg-green-100 text-green-800"
+            });
+          }
+        } else {
+          const worstDailyProfit = results.reduce((worst, r) => r.profitPerDay < worst.profitPerDay ? r : worst, results[0]);
+          const dailyDiff = bestDailyProfit.profitPerDay - worstDailyProfit.profitPerDay;
+          if (dailyDiff > 0) {
+            const profitBoostBest = (bestDailyProfit.sellPricePerUnit / bestDailyProfit.buyPricePerUnit).toFixed(1);
+            const profitBoostWorst = (worstDailyProfit.sellPricePerUnit / worstDailyProfit.buyPricePerUnit).toFixed(1);
+            insights.push({
+              title: "Best Daily Profit",
+              message: `${bestDailyProfit.itemName} earns $ ${formatCurrency(dailyDiff)} more per day than ${worstDailyProfit.itemName}—prioritize it! ${bestDailyProfit.itemName} gives you a Profit Boost of ${profitBoostBest}x your cost, vs. ${profitBoostWorst}x for ${worstDailyProfit.itemName}.`,
+              style: "bg-green-100 text-green-800"
+            });
+          }
+        }
+
+        // Highest Profit per Fly
+        const bestProfitPerFly = results.reduce((best, r) => r.totalProfitPerFly > best.totalProfitPerFly ? r : best, results[0]);
+        if (results.length >= 3) {
+          const othersProfit = results.filter(r => r !== bestProfitPerFly).reduce((sum, r) => sum + r.totalProfitPerFly, 0) / (results.length - 1);
+          const flyDiff = bestProfitPerFly.totalProfitPerFly - othersProfit;
+          if (flyDiff > 0) {
+            const profitBoostBest = (bestProfitPerFly.sellPricePerUnit / bestProfitPerFly.buyPricePerUnit).toFixed(1);
+            insights.push({
+              title: "Highest Profit per Fly",
+              message: `${bestProfitPerFly.itemName} exceeds the average profit per fly of others by $ ${formatCurrency(flyDiff)}! Its Profit Boost is ${profitBoostBest}x.`,
+              style: "bg-yellow-100 text-yellow-800"
+            });
+          }
+        } else {
+          const worstProfitPerFly = results.reduce((worst, r) => r.totalProfitPerFly < worst.totalProfitPerFly ? r : worst, results[0]);
+          const flyDiff = bestProfitPerFly.totalProfitPerFly - worstProfitPerFly.totalProfitPerFly;
+          if (flyDiff > 0) {
+            const profitBoostBest = (bestProfitPerFly.sellPricePerUnit / bestProfitPerFly.buyPricePerUnit).toFixed(1);
+            const profitBoostWorst = (worstProfitPerFly.sellPricePerUnit / worstProfitPerFly.buyPricePerUnit).toFixed(1);
+            insights.push({
+              title: "Highest Profit per Fly",
+              message: `${bestProfitPerFly.itemName} makes $ ${formatCurrency(flyDiff)} more per fly than ${worstProfitPerFly.itemName}! Its Profit Boost is ${profitBoostBest}x vs. ${profitBoostWorst}x.`,
+              style: "bg-yellow-100 text-yellow-800"
+            });
+          }
+        }
+
+        // Most Efficient Fly Time
+        const mostEfficient = results.reduce((best, r) => r.roundTripsPerDay > best.roundTripsPerDay ? r : best, results[0]);
+        if (results.length >= 3) {
+          const othersEfficiency = results.filter(r => r !== mostEfficient).reduce((sum, r) => sum + r.roundTripsPerDay, 0) / (results.length - 1);
+          const efficiencyDiff = mostEfficient.roundTripsPerDay - othersEfficiency;
+          if (efficiencyDiff > 0) {
+            insights.push({
+              title: "Most Efficient Fly Time",
+              message: `${mostEfficient.itemName} averages ${efficiencyDiff} more round trips per day than other items—perfect for frequent trips!`,
+              style: "bg-blue-100 text-blue-800"
+            });
+          }
+        } else {
+          const leastEfficient = results.reduce((worst, r) => r.roundTripsPerDay < worst.roundTripsPerDay ? r : worst, results[0]);
+          const efficiencyDiff = mostEfficient.roundTripsPerDay - leastEfficient.roundTripsPerDay;
+          if (efficiencyDiff > 0) {
+            insights.push({
+              title: "Most Efficient Fly Time",
+              message: `${mostEfficient.itemName} lets you make ${efficiencyDiff} more round trips per day than ${leastEfficient.itemName}—great for frequent flyers!`,
+              style: "bg-blue-100 text-blue-800"
+            });
+          }
+        }
+
+        // Top Weekly Earner
+        const bestWeeklyProfit = results.reduce((best, r) => r.profitPerWeek > best.profitPerWeek ? r : best, results[0]);
+        if (results.length >= 3) {
+          const othersProfit = results.filter(r => r !== bestWeeklyProfit).reduce((sum, r) => sum + r.profitPerWeek, 0) / (results.length - 1);
+          const weeklyDiff = bestWeeklyProfit.profitPerWeek - othersProfit;
+          if (weeklyDiff > 0) {
+            const profitBoostBest = (bestWeeklyProfit.sellPricePerUnit / bestWeeklyProfit.buyPricePerUnit).toFixed(1);
+            insights.push({
+              title: "Top Weekly Earner",
+              message: `${bestWeeklyProfit.itemName} outpaces the average weekly profit of others by $ ${formatCurrency(weeklyDiff)}! Its Profit Boost is ${profitBoostBest}x.`,
+              style: "bg-purple-100 text-purple-800"
+            });
+          }
+        } else {
+          const worstWeeklyProfit = results.reduce((worst, r) => r.profitPerWeek < worst.profitPerWeek ? r : worst, results[0]);
+          const weeklyDiff = bestWeeklyProfit.profitPerWeek - worstWeeklyProfit.profitPerWeek;
+          if (weeklyDiff > 0) {
+            const profitBoostBest = (bestWeeklyProfit.sellPricePerUnit / bestWeeklyProfit.buyPricePerUnit).toFixed(1);
+            const profitBoostWorst = (worstWeeklyProfit.sellPricePerUnit / worstWeeklyProfit.buyPricePerUnit).toFixed(1);
+            insights.push({
+              title: "Top Weekly Earner",
+              message: `${bestWeeklyProfit.itemName} earns $ ${formatCurrency(weeklyDiff)} more per week than ${worstWeeklyProfit.itemName}! Its Profit Boost is ${profitBoostBest}x vs. ${profitBoostWorst}x.`,
+              style: "bg-purple-100 text-purple-800"
+            });
+          }
+        }
+
+        return insights;
+      };
+
+      const getTip = () => {
+        if (!results || results.length === 0) return "";
+        const bestDailyProfit = results.reduce((best, r) => r.profitPerDay > best.profitPerDay ? r : best, results[0]);
+        const longestFlyTime = results.reduce((longest, r) => parseFlyTime(r.flyTime) > parseFlyTime(longest.flyTime) ? r : longest, results[0]);
+        return `Tip: Focus on ${bestDailyProfit.itemName} for the biggest daily cash! If fly times feel long (like ${longestFlyTime.itemName}'s ${longestFlyTime.flyTime}), consider upgrading your travel method to save time.`;
+      };
+
+      const calculateGoalProgress = () => {
+        if (!results || profitGoal <= 0) return null;
+
+        const profitKey = `profitPer${goalTimeframe.charAt(0).toUpperCase() + goalTimeframe.slice(1)}`;
+        const totalProfit = results.reduce((sum, r) => sum + r[profitKey], 0);
+        const progress = Math.min((totalProfit / profitGoal) * 100, 100);
+
+        const remainingProfit = Math.max(profitGoal - totalProfit, 0);
+        const bestItem = results.reduce((best, r) => r[profitKey] > (best[profitKey] || 0) ? r : best, results[0]);
+        const tripsNeeded = remainingProfit > 0 ? Math.ceil(remainingProfit / bestItem[profitKey]) : 0;
+
+        return { progress, totalProfit, remainingTrips: tripsNeeded, bestItem: bestItem.itemName };
+      };
+
+      const goalProgress = calculateGoalProgress();
+
+      const drawChart = () => {
+        const canvas = document.getElementById('canvas');
+        if (!canvas || !chartData) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const maxValue = Math.max(...chartData.map(d => d.maxValue), 0);
+        const barWidth = canvas.width / chartData.length - 10;
+        const barHeightScale = canvas.height / (maxValue * 1.1);
+
+        ctx.fillStyle = '#3b82f6';
+        chartData.forEach((data, index) => {
+          const height = data.value * barHeightScale;
+          const diffHeight = (data.maxValue - data.value) * barHeightScale;
+          ctx.fillRect(index * (barWidth + 10), canvas.height - height, barWidth, height);
+          ctx.fillStyle = '#ff4444';
+          ctx.fillRect(index * (barWidth + 10), canvas.height - height - diffHeight, barWidth, diffHeight);
+          ctx.fillStyle = '#000';
+          ctx.fillText(data.label, index * (barWidth + 10), canvas.height - height - 5, barWidth);
+          ctx.fillText(`$${formatCurrency(data.value)}`, index * (barWidth + 10), canvas.height - 5, barWidth);
+        });
+      };
+
+      React.useEffect(() => {
+        if (chartData) {
+          const canvasPanel = document.getElementById('canvasPanel');
+          canvasPanel.className = 'canvas-container';
+          const canvas = document.createElement('canvas');
+          canvas.id = 'canvas';
+          canvas.width = 600;
+          canvas.height = 300;
+          canvasPanel.innerHTML = '';
+          canvasPanel.appendChild(canvas);
+          drawChart();
+        }
+      }, [chartData, chartPeriod]);
+
+      return React.createElement(
+        "div",
+        { className: "bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl mx-auto" },
+        React.createElement(
+          "h1",
+          { className: "text-2xl font-bold text-center mb-6" },
+          "Plushie & Flower Profit Calculator"
+        ),
+        React.createElement(
+          "div",
+          { className: "tabs" },
+          ["main", "prices", "insights", "watchlist", "goals"].map(tab =>
+            React.createElement(
+              "div",
+              {
+                key: tab,
+                className: `tab ${activeTab === tab ? "active" : ""}`,
+                onClick: () => setActiveTab(tab)
+              },
+              tab.charAt(0).toUpperCase() + tab.slice(1)
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: `tab-content ${activeTab === "main" ? "active" : ""}` },
+          React.createElement(
+            "div",
+            { className: "mb-5" },
+            React.createElement(
+              "label",
+              { className: "block text-gray-700 mb-2" },
+              "Enter Your Torn API Key (Optional)"
+            ),
+            React.createElement("input", {
+              type: "text",
+              value: apiKey,
+              onChange: (e) => setApiKey(e.target.value),
+              className: "w-full p-2 border rounded mb-2",
+              placeholder: "Paste your API key to auto-update prices"
+            }),
+            React.createElement(
+              "p",
+              { className: "text-sm text-gray-500" },
+              "Enter your API key to fetch current market prices from Torn."
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "mb-5" },
+            React.createElement(
+              "label",
+              { className: "block text-gray-700 mb-2" },
+              "Select Item Type to Compare"
+            ),
+            React.createElement(
+              "div",
+              { className: "flex gap-4" },
+              ["plushies", "flowers", "mix"].map(type =>
+                React.createElement(
+                  "label",
+                  { key: type, className: "flex items-center" },
+                  React.createElement("input", {
+                    type: "radio",
+                    name: "itemType",
+                    value: type,
+                    checked: itemType === type,
+                    onChange: () => {
+                      setItemType(type);
+                      setSelectedPlushies([]);
+                      setSelectedFlowers([]);
+                      setResults(null);
+                      setFetchStatus(null);
+                    },
+                    className: "mr-2"
+                  }),
+                  type.charAt(0).toUpperCase() + type.slice(1)
+                )
+              )
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "mb-5" },
+            React.createElement(
+              "label",
+              { className: "block text-gray-700 mb-2" },
+              "Select Travel Method"
+            ),
+            React.createElement(
+              "select",
+              {
+                value: travelMethod,
+                onChange: (e) => setTravelMethod(e.target.value),
+                className: "w-full p-2 border rounded"
+              },
+              React.createElement("option", { value: "standard" }, "Standard"),
+              React.createElement("option", { value: "airstrip" }, "Airstrip"),
+              React.createElement("option", { value: "wlt" }, "WLT Benefit"),
+              React.createElement("option", { value: "business" }, "Business Class")
+            )
+          ),
+          (itemType === "plushies" || itemType === "mix") && React.createElement(
+            "div",
+            { className: "mb-6" },
+            React.createElement(
+              "label",
+              { className: "block text-gray-700 mb-2" },
+              "Select Plushies to Compare"
+            ),
+            React.createElement(
+              "div",
+              { className: "grid grid-cols-2 gap-2" },
+              plushieData.map(p =>
+                React.createElement(
+                  "label",
+                  { key: p.name, className: "flex items-center" },
+                  React.createElement("input", {
+                    type: "checkbox",
+                    checked: selectedPlushies.includes(p.name),
+                    onChange: () => handlePlushieToggle(p.name),
+                    className: "mr-2"
+                  }),
+                  `${p.name} (${p.country})`
+                )
+              )
+            )
+          ),
+          (itemType === "flowers" || itemType === "mix") && React.createElement(
+            "div",
+            { className: "mb-6" },
+            React.createElement(
+              "label",
+              { className: "block text-gray-700 mb-2" },
+              "Select Flowers to Compare"
+            ),
+            React.createElement(
+              "div",
+              { className: "grid grid-cols-2 gap-2" },
+              flowerData.map(f =>
+                React.createElement(
+                  "label",
+                  { key: f.name, className: "flex items-center" },
+                  React.createElement("input", {
+                    type: "checkbox",
+                    checked: selectedFlowers.includes(f.name),
+                    onChange: () => handleFlowerToggle(f.name),
+                    className: "mr-2"
+                  }),
+                  `${f.name} (${f.country})`
+                )
+              )
+            )
+          ),
+          selectedItems.length > 0 && apiKey && React.createElement(
+            "div",
+            { className: "mb-6" },
+            React.createElement(
+              "button",
+              {
+                onClick: fetchMarketPrices,
+                className: "w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+              },
+              "Fetch Prices"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-sm text-gray-500 mt-2" },
+              "Fetching prices will automatically update the sell prices below."
+            )
+          ),
+          selectedItems.length > 0 && React.createElement(
+            "div",
+            null,
+            selectedItems.map(itemName =>
+              React.createElement(
+                "div",
+                { key: itemName, className: "mb-6 border p-6 rounded" },
+                React.createElement(
+                  "h3",
+                  { className: "text-lg font-semibold mb-2" },
+                  itemName
+                ),
+                React.createElement(
+                  "div",
+                  { className: "grid grid-cols-1 sm:grid-cols-3 gap-4" },
+                  React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                      "label",
+                      { className: "block text-gray-700 mb-2" },
+                      `Sell Price ($) (${inputs[itemName].priceSource})`
+                    ),
+                    React.createElement("input", {
+                      type: "number",
+                      value: inputs[itemName].sellPrice,
+                      onChange: (e) => handleInputChange(itemName, 'sellPrice', e.target.value),
+                      className: "w-full p-2 border rounded",
+                      placeholder: "Enter sell price manually",
+                      min: "0"
+                    })
+                  ),
+                  React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                      "label",
+                      { className: "block text-gray-700 mb-2" },
+                      "Quantity per Fly"
+                    ),
+                    React.createElement("input", {
+                      type: "number",
+                      value: inputs[itemName].qtyPerFly,
+                      onChange: (e) => handleInputChange(itemName, 'qtyPerFly', e.target.value),
+                      className: "w-full p-2 border rounded",
+                      placeholder: "Enter quantity per fly",
+                      min: "0"
+                    })
+                  ),
+                  React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                      "label",
+                      { className: "block text-gray-700 mb-2" },
+                      "Fly Time (hours:minutes)"
+                    ),
+                    React.createElement("input", {
+                      type: "text",
+                      value: inputs[itemName].flyTime,
+                      onChange: (e) => handleInputChange(itemName, 'flyTime', e.target.value),
+                      className: "w-full p-2 border rounded",
+                      placeholder: "e.g., 1:30"
+                    })
+                  )
+                )
+              )
+            ),
+            React.createElement(
+              "p",
+              { className: "text-sm text-gray-500 mb-6" },
+              "Prices update when you click Fetch Prices using Torn Market Value or enter manually."
+            )
+          ),
+          selectedItems.length > 0 && React.createElement(
+            "button",
+            {
+              onClick: calculate,
+              className: "w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            },
+            "Calculate"
+          ),
+          results && React.createElement(
+            "div",
+            { className: "mt-6" },
+            React.createElement(
+              "h2",
+              { className: "text-xl font-semibold mb-4" },
+              "Comparison Results"
+            ),
+            React.createElement(
+              "div",
+              { className: "flex gap-2 mb-4" },
+              ["overall", "unit", "day", "week", "month", "year"].map(timeframe =>
+                React.createElement(
+                  "button",
+                  {
+                    key: timeframe,
+                    onClick: () => setSelectedTimeframe(timeframe),
+                    className: `px-4 py-2 rounded ${
+                      selectedTimeframe === timeframe
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`
+                  },
+                  timeframe.charAt(0).toUpperCase() + timeframe.slice(1)
+                )
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "overflow-x-auto" },
+              React.createElement(
+                "table",
+                { className: "w-full text-sm border-collapse" },
+                React.createElement(
+                  "thead",
+                  null,
+                  React.createElement(
+                    "tr",
+                    { className: "bg-gray-200" },
+                    React.createElement("th", { className: "border p-2" }, "Metric"),
+                    results.map(r =>
+                      React.createElement(
+                        "th",
+                        { key: r.itemName, className: "border p-2" },
+                        `${r.itemName} (${r.country})`
+                      )
+                    )
+                  )
+                ),
+                React.createElement(
+                  "tbody",
+                  null,
+                  metricsByTimeframe[selectedTimeframe].map(metric =>
+                    metric.isSeparator
+                      ? React.createElement(
+                          "tr",
+                          { key: metric.label, className: "bg-gray-100" },
+                          React.createElement(
+                            "td",
+                            { colSpan: results.length + 1, className: "border p-2 font-semibold text-center" },
+                            metric.label
+                          )
+                        )
+                      : React.createElement(
+                          "tr",
+                          { key: metric.key, className: "border-b" },
+                          React.createElement(
+                            "td",
+                            { className: `border p-2 font-medium ${metric.isBold ? "font-bold" : ""}` },
+                            metric.label
+                          ),
+                          results.map(r =>
+                            React.createElement(
+                              "td",
+                              { key: r.itemName, className: `border p-2 ${metric.isBold ? "font-bold" : ""}` },
+                              metric.isCurrency ? `$ ${formatCurrency(r[metric.key])}` : formatNumber(r[metric.key])
+                            )
+                          )
+                        )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: `tab-content ${activeTab === "prices" ? "active" : ""}` },
+          selectedItems.length > 0 && React.createElement(
+            "div",
+            { className: "mb-6" },
+            React.createElement(
+              "h2",
+              { className: "text-xl font-semibold mb-4" },
+              "Current Prices for Selected Items"
+            ),
+            fetchStatus && React.createElement(
+              "div",
+              { className: "mb-6" },
+              React.createElement(
+                "h3",
+                { className: "text-lg font-semibold mb-2" },
+                "Price Update Status"
+              ),
+              React.createElement(
+                "div",
+                { className: "overflow-x-auto" },
+                React.createElement(
+                  "table",
+                  { className: "w-full text-sm border-collapse" },
+                  React.createElement(
+                    "thead",
+                    null,
+                    React.createElement(
+                      "tr",
+                      { className: "bg-gray-200" },
+                      React.createElement("th", { className: "border p-2" }, "Item"),
+                      React.createElement("th", { className: "border p-2" }, "Price Status")
+                    )
+                  ),
+                  React.createElement(
+                    "tbody",
+                    null,
+                    fetchStatus.messages.map((msg, index) =>
+                      React.createElement(
+                        "tr",
+                        { key: index, className: "border-b" },
+                        React.createElement(
+                          "td",
+                          { className: `border p-2 ${fetchStatus.type === "error" ? "text-red-500" : "text-gray-700"}` },
+                          msg.item
+                        ),
+                        React.createElement(
+                          "td",
+                          { className: `border p-2 ${fetchStatus.type === "error" ? "text-red-500" : "text-gray-700"}` },
+                          msg.message
+                        )
+                      )
+                    )
+                  )
+                )
+              ),
+              React.createElement(
+                "p",
+                { className: "text-sm text-gray-500 mt-2" },
+                "Note: Prices marked with a value are sourced from Torn Market Value."
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "overflow-x-auto" },
+              React.createElement(
+                "table",
+                { className: "w-full text-sm border-collapse" },
+                React.createElement(
+                  "thead",
+                  null,
+                  React.createElement(
+                    "tr",
+                    { className: "bg-gray-200" },
+                    React.createElement("th", { className: "border p-2" }, "Item"),
+                    React.createElement("th", { className: "border p-2" }, "Sell Price ($)"),
+                    React.createElement("th", { className: "border p-2" }, "Source")
+                  )
+                ),
+                React.createElement(
+                  "tbody",
+                  null,
+                  selectedItems.map(itemName =>
+                    React.createElement(
+                      "tr",
+                      { key: itemName, className: "border-b" },
+                      React.createElement("td", { className: "border p-2" }, itemName),
+                      React.createElement("td", { className: "border p-2" }, `$ ${formatCurrency(inputs[itemName].sellPrice)}`),
+                      React.createElement("td", { className: "border p-2" }, inputs[itemName].priceSource)
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          selectedItems.length === 0 && React.createElement(
+            "p",
+            { className: "text-gray-500" },
+            "Select items in the Main tab to view their current prices."
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: `tab-content ${activeTab === "insights" ? "active" : ""}` },
+          results && results.length >= 2 && React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h2",
+              { className: "text-xl font-semibold mb-4" },
+              "Market Insights"
+            ),
+            getMarketInsights().map((insight, index) =>
+              React.createElement(
+                "div",
+                { key: index, className: `mb-4 p-4 rounded ${insight.style}` },
+                React.createElement(
+                  "h3",
+                  { className: "text-lg font-semibold" },
+                  insight.title
+                ),
+                React.createElement(
+                  "p",
+                  null,
+                  insight.message
+                )
+              )
+            ),
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold mb-2 mt-4" },
+              "Profit Overview"
+            ),
+            React.createElement(
+              "div",
+              { className: "overflow-x-auto mb-4" },
+              React.createElement(
+                "table",
+                { className: "w-full text-sm border-collapse" },
+                React.createElement(
+                  "thead",
+                  null,
+                  React.createElement(
+                    "tr",
+                    { className: "bg-gray-200" },
+                    React.createElement("th", { className: "border p-2" }, "Item"),
+                    React.createElement("th", { className: "border p-2" }, "Daily Profit ($)"),
+                    React.createElement("th", { className: "border p-2" }, "Profit Boost (x Cost)")
+                  )
+                ),
+                React.createElement(
+                  "tbody",
+                  null,
+                  results.map(r =>
+                    React.createElement(
+                      "tr",
+                      { key: r.itemName, className: "border-b" },
+                      React.createElement("td", { className: "border p-2" }, r.itemName),
+                      React.createElement("td", { className: "border p-2" }, `$ ${formatCurrency(r.profitPerDay)}`),
+                      React.createElement("td", { className: "border p-2" }, `${(r.sellPricePerUnit / r.buyPricePerUnit).toFixed(1)}x`)
+                    )
+                  )
+                )
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "mb-2" },
+              React.createElement(
+                "label",
+                { className: "mr-2" },
+                "View by:"
+              ),
+              React.createElement(
+                "select",
+                {
+                  value: chartPeriod,
+                  onChange: (e) => setChartPeriod(e.target.value),
+                  className: "p-2 border rounded"
+                },
+                ["month", "year"].map(period =>
+                  React.createElement("option", { key: period, value: period }, period.charAt(0).toUpperCase() + period.slice(1))
+                )
+              )
+            ),
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold mb-2" },
+              `${chartPeriod.charAt(0).toUpperCase() + chartPeriod.slice(1)}ly Profit Chart`
+            ),
+            React.createElement(
+              "div",
+              { id: "canvasPanel", className: "canvas-container" }
+            ),
+            React.createElement(
+              "p",
+              { className: "text-sm text-gray-500 mt-2" },
+              `Blue bars show ${chartPeriod}ly profit per item. Red portions show how much it lags behind the highest earner!`
+            ),
+            React.createElement(
+              "h3",
+              { className: "text-lg font-semibold mb-2 mt-4" },
+              "Pro Tip"
+            ),
+            React.createElement(
+              "p",
+              { className: "text-gray-700" },
+              getTip()
+            )
+          ),
+          (!results || results.length < 2) && React.createElement(
+            "p",
+            { className: "text-gray-500" },
+            "Calculate profits for at least two items in the Main tab to see insights."
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: `tab-content ${activeTab === "watchlist" ? "active" : ""}` },
+          React.createElement(
+            "div",
+            { className: "mb-6" },
+            React.createElement(
+              "label",
+              { className: "block text-gray-700 mb-2" },
+              "Select Items to Watch"
+            ),
+            React.createElement(
+              "div",
+              { className: "mb-4" },
+              React.createElement(
+                "h3",
+                { className: "text-lg font-semibold mb-2" },
+                "Plushies"
+              ),
+              React.createElement(
+                "div",
+                { className: "grid grid-cols-2 gap-2" },
+                plushieData.map(p =>
+                  React.createElement(
+                    "label",
+                    { key: p.name, className: "flex items-center" },
+                    React.createElement("input", {
+                      type: "checkbox",
+                      checked: watchlist.includes(p.name),
+                      onChange: () => toggleWatchlist(p.name),
+                      className: "mr-2"
+                    }),
+                    `${p.name} (${p.country})`
+                  )
+                )
+              )
+            ),
+            React.createElement(
+              "div",
+              null,
+              React.createElement(
+                "h3",
+                { className: "text-lg font-semibold mb-2" },
+                "Flowers"
+              ),
+              React.createElement(
+                "div",
+                { className: "grid grid-cols-2 gap-2" },
+                flowerData.map(f =>
+                  React.createElement(
+                    "label",
+                    { key: f.name, className: "flex items-center" },
+                    React.createElement("input", {
+                      type: "checkbox",
+                      checked: watchlist.includes(f.name),
+                      onChange: () => toggleWatchlist(f.name),
+                      className: "mr-2"
+                    }),
+                    `${f.name} (${f.country})`
+                  )
+                )
+              )
+            )
+          ),
+          watchlistNotifications.length > 0 && React.createElement(
+            "div",
+            { className: "mb-6 bg-yellow-100 p-4 rounded" },
+            React.createElement(
+              "h2",
+              { className: "text-lg font-semibold mb-2 text-yellow-800" },
+              "Watchlist Updates"
+            ),
+            watchlistNotifications.map((notif, index) =>
+              React.createElement(
+                "p",
+                { key: index, className: "text-yellow-800" },
+                `${notif.item}: ${notif.message}`
+              )
+            )
+          ),
+          watchlist.length > 0 && React.createElement(
+            "div",
+            { className: "mt-6" },
+            React.createElement(
+              "h2",
+              { className: "text-xl font-semibold mb-4" },
+              "Price History for Watched Items"
+            ),
+            watchlist.map(itemName =>
+              inputs[itemName].priceHistory.length > 0 && React.createElement(
+                "div",
+                { key: itemName, className: "mb-6" },
+                React.createElement(
+                  "h4",
+                  { className: "text-lg font-semibold mb-2" },
+                  itemName
+                ),
+                React.createElement(
+                  "table",
+                  { className: "w-full text-sm border-collapse" },
+                  React.createElement(
+                    "thead",
+                    null,
+                    React.createElement(
+                      "tr",
+                      { className: "bg-gray-200" },
+                      React.createElement("th", { className: "border p-2" }, "Date"),
+                      React.createElement("th", { className: "border p-2" }, "Price ($)")
+                    )
+                  ),
+                  React.createElement(
+                    "tbody",
+                    null,
+                    inputs[itemName].priceHistory.map((entry, index) =>
+                      React.createElement(
+                        "tr",
+                        { key: index, className: "border-b" },
+                        React.createElement("td", { className: "border p-2" }, entry.date),
+                        React.createElement("td", { className: "border p-2" }, formatCurrency(entry.price))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          watchlist.length === 0 && React.createElement(
+            "p",
+            { className: "text-gray-500" },
+            "Add items to your watchlist to track their price history and receive updates."
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: `tab-content ${activeTab === "goals" ? "active" : ""}` },
+          React.createElement(
+            "div",
+            { className: "mb-5" },
+            React.createElement(
+              "label",
+              { className: "block text-gray-700 mb-2" },
+              "Set Your Profit Goal"
+            ),
+            React.createElement(
+              "div",
+              { className: "grid grid-cols-2 gap-4" },
+              React.createElement("input", {
+                type: "number",
+                value: profitGoal,
+                onChange: (e) => setProfitGoal(parseFloat(e.target.value) || 0),
+                className: "w-full p-2 border rounded",
+                placeholder: "Enter profit goal ($)",
+                min: "0"
+              }),
+              React.createElement(
+                "select",
+                {
+                  value: goalTimeframe,
+                  onChange: (e) => setGoalTimeframe(e.target.value),
+                  className: "w-full p-2 border rounded"
+                },
+                ["day", "week", "month", "year"].map(tf =>
+                  React.createElement("option", { key: tf, value: tf }, tf.charAt(0).toUpperCase() + tf.slice(1))
+                )
+              )
+            )
+          ),
+          goalProgress && React.createElement(
+            "div",
+            null,
+            React.createElement(
+              "h2",
+              { className: "text-xl font-semibold mb-4" },
+              "Profit Goal Progress"
+            ),
+            React.createElement(
+              "div",
+              { className: "progress-bar" },
+              React.createElement("div", {
+                className: "progress",
+                style: { width: `${goalProgress.progress}%` }
+              })
+            ),
+            React.createElement(
+              "p",
+              { className: "mt-2" },
+              `You're ${goalProgress.progress.toFixed(2)}% to your ${goalTimeframe}ly goal of $ ${formatCurrency(profitGoal)}!`
+            ),
+            goalProgress.remainingTrips > 0 && React.createElement(
+              "p",
+              { className: "mt-1" },
+              `Fly ${goalProgress.remainingTrips} more time${goalProgress.remainingTrips === 1 ? '' : 's'} with ${goalProgress.bestItem} to reach your goal.`
+            )
+          ),
+          !goalProgress && React.createElement(
+            "p",
+            { className: "text-gray-500" },
+            "Set a profit goal and calculate profits in the Main tab to see your progress."
+          )
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(App));
+  </script>
+</body>
+</html>
